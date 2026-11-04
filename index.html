@@ -35,6 +35,22 @@
       <div id="error"></div>
     </div>
     <script>
+      // 重さを測る：ゲームの1コマ（requestAnimationFrame の1回）の処理にかかった時間を数える。
+      // ゲームの FPS 表示が読む（Assets/Plugins/WebGL/FrameStats.jslib）。
+      (function () {
+        var raf = window.requestAnimationFrame.bind(window);
+        var stats = { busy: 0, frames: 0 };
+        window.sdFrameStats = stats;
+        window.requestAnimationFrame = function (callback) {
+          return raf(function (time) {
+            var start = performance.now();
+            callback(time);
+            stats.busy += performance.now() - start;
+            stats.frames++;
+          });
+        };
+      })();
+
       var canvas = document.getElementById("unity-canvas");
       var loading = document.getElementById("loading");
       var fill = document.getElementById("fill");
